@@ -10,7 +10,7 @@
 
 ### 💼 公開中の実績
 - **[uranai.html](./uranai.html)**: 100通りの運勢がランダムに楽しめるJavaScript占いプログラム。
-- **[ai.py](./ai.py)**: ユーザーを元気づけるビジネスAI秘書システム。
+- **[ai.py](./ai.py)**: ユーザーを元気づけるビジネスAI秘書システム.
 - **[stock_analyzer.py](./stock_analyzer.py)**: 株価の変動を色分けして視覚的に判定する分析ツール。
 
 ---
