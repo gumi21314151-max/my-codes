@@ -3,24 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>グミの100の運勢占い</title>
+    <title>グミの1日1回限定・100の運勢占い</title>
     <style>
-        body { text-align: center; font-family: sans-serif; background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; padding: 50px 20px; }
+        body { text-align: center; font-family: 'Hiragino Kaku Gothic ProN', sans-serif; background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; padding: 50px 20px; }
         .container { background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.5); max-width: 500px; margin: auto; }
         h1 { color: #e94560; }
         button { padding: 15px 30px; font-size: 18px; cursor: pointer; background: #e94560; color: white; border: none; border-radius: 50px; transition: 0.3s; box-shadow: 0 5px #a02040; }
         button:active { transform: translateY(3px); box-shadow: 0 2px #a02040; }
-        #result { font-size: 22px; margin-top: 30px; line-height: 1.6; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+        button:disabled { background: #555; box-shadow: none; cursor: not-allowed; }
+        #result { font-size: 22px; margin-top: 30px; line-height: 1.6; min-height: 100px; display: flex; align-items: center; justify-content: center; color: #ffeb3b; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔮 100の運勢占い 🔮</h1>
-        <p>あなたの今日の運勢は…？</p>
-        <button onclick="uranai()">運勢を占う</button>
+        <h1>🔮 1日1回限定・占い 🔮</h1>
+        <p>あなたの今日の運勢は…？（1日1回だけ占えます）</p>
+        <button id="uranaiBtn" onclick="uranai()">運勢を占う</button>
         <div id="result">ボタンを押してね</div>
     </div>
+
     <script>
+        // ページを読み込んだ瞬間に「今日すでに占ったか」チェック
+        window.onload = function() {
+            const today = new Date().toLocaleDateString();
+            const lastDate = localStorage.getItem("lastUranaiDate");
+            const lastResult = localStorage.getItem("lastUranaiResult");
+
+            if (lastDate === today) {
+                document.getElementById("result").innerText = "【本日の結果】\n" + lastResult + "\n\n※占いは1日1回です。また明日お越しください。";
+                document.getElementById("uranaiBtn").disabled = true;
+            }
+        };
+
         function uranai() {
             const results = [
                 "✨超大吉：宇宙があなたを祝福しています！", "✨大吉：今日は何をやっても無敵！強気でいこう！",
@@ -74,8 +88,128 @@
                 "⚡️要注意：今日は早めに帰宅して、お気に入りの映画を見よう。", "⚡️要注意：失敗しても大丈夫。それは成功へのデータです。",
                 "⚡️要注意：お守り代わりに好きな音楽を聴いて。", "🌈奇跡：100個目の運勢！今日は伝説の一日になります。"
             ];
+
             const n = Math.floor(Math.random() * results.length);
-            document.getElementById("result").innerText = results[n];
+            const finalResult = results[n];
+
+            // 表示を更新
+            document.getElementById("result").innerText = finalResult;
+            
+            // ボタンを無効化
+            document.getElementById("uranaiBtn").disabled = true;
+
+            // 記憶箱（localStorage）に保存
+            const today = new Date().toLocaleDateString();
+            localStorage.setItem("lastUranaiDate", today);
+            localStorage.setItem("lastUranaiResult", finalResult);
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>グミの1日1回限定・100の運勢占い</title>
+    <style>
+        body { text-align: center; font-family: 'Hiragino Kaku Gothic ProN', sans-serif; background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; padding: 50px 20px; }
+        .container { background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.5); max-width: 500px; margin: auto; }
+        h1 { color: #e94560; }
+        button { padding: 15px 30px; font-size: 18px; cursor: pointer; background: #e94560; color: white; border: none; border-radius: 50px; transition: 0.3s; box-shadow: 0 5px #a02040; }
+        button:active { transform: translateY(3px); box-shadow: 0 2px #a02040; }
+        button:disabled { background: #555; box-shadow: none; cursor: not-allowed; }
+        #result { font-size: 22px; margin-top: 30px; line-height: 1.6; min-height: 100px; display: flex; align-items: center; justify-content: center; color: #ffeb3b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔮 1日1回限定・占い 🔮</h1>
+        <p>あなたの今日の運勢は…？（1日1回だけ占えます）</p>
+        <button id="uranaiBtn" onclick="uranai()">運勢を占う</button>
+        <div id="result">ボタンを押してね</div>
+    </div>
+
+    <script>
+        // ページを読み込んだ瞬間に「今日すでに占ったか」チェック
+        window.onload = function() {
+            const today = new Date().toLocaleDateString();
+            const lastDate = localStorage.getItem("lastUranaiDate");
+            const lastResult = localStorage.getItem("lastUranaiResult");
+
+            if (lastDate === today) {
+                document.getElementById("result").innerText = "【本日の結果】\n" + lastResult + "\n\n※占いは1日1回です。また明日お越しください。";
+                document.getElementById("uranaiBtn").disabled = true;
+            }
+        };
+
+        function uranai() {
+            const results = [
+                "✨超大吉：宇宙があなたを祝福しています！", "✨大吉：今日は何をやっても無敵！強気でいこう！",
+                "✨大吉：100年に一度の幸運が今日舞い込むかも。", "✨大吉：あなたの笑顔が最高のラッキーアイテムです。",
+                "✨大吉：臨時収入の予感！財布を綺麗にしておこう。", "✨大吉：欲しかったあの服がセールで見つかるかも！",
+                "✨大吉：街で有名人に遭遇するくらいの強運日。", "✨大吉：好きな人から「いいね」が届く予感！",
+                "✨大吉：新しい趣味が一生の仕事に変わる第一歩の日。", "✨大吉：今日のあなたは周りの人の運気まで上げちゃいます。",
+                "✨大吉：テストや発表、全力を出せば100点満点！", "✨大吉：行列のお店に並ばずに入れるラッキーが！",
+                "✨大吉：探し続けていた答えが、ふとした瞬間に見つかります。", "✨大吉：空に虹が見えるかも。上を向いて歩こう！",
+                "✨大吉：今日会う人はあなたの生涯の友になるかも。", "✨大吉：眠っていた才能が爆発します。自信を持って！",
+                "✨大吉：なくしたと思っていた宝物が出てくるよ。", "✨大吉：今日は何を飲んでも美味しい！最高のご馳走に出会える。",
+                "✨大吉：SNSでの発言がバズっちゃうかも？", "✨大吉：今日は「自分へのご褒美」がさらなる運を呼びます。",
+                "🌿中吉：穏やかで優しい時間が流れる一日になります。", "🌿中吉：仕事や勉強がサクサク進んで定時に終わるよ。",
+                "🌿中吉：カフェで隣に座った人の会話からヒントが！", "🌿中吉：今日は青色の服を着ると集中力がアップします。",
+                "🌿中吉：植物に水をあげると、あなたの運気も育ちます。", "🌿中吉：友達の相談に乗ってあげると、自分も救われます。",
+                "🌿中吉：ちょうどいいタイミングで電車に乗れるよ。", "🌿中吉：欲しかった本が本屋さんの目立つ場所に！",
+                "🌿中吉：夕飯が好物になる確率80%！", "🌿中吉：散歩中に可愛い猫に出会えるかも。",
+                "🌿中吉：今日はゆっくりお風呂に浸かると閃きがあります。", "🌿中吉：誰かの「ありがとう」があなたの力になる日。",
+                "🌿中吉：昔好きだったものをもう一度手に取ってみて。", "🌿中吉：新しい靴をおろすなら今日がベストタイミング！",
+                "🌿中吉：スマホの整理をすると、良いニュースが入ってきます。", "🌿中吉：苦手なあの人との距離が少し縮まるかも。",
+                "🌿中吉：10分だけ掃除をしてみて。運気がガラッと変わるよ。", "🌿中吉：今日のおやつはシェアすると幸せが倍増！",
+                "🌿中吉：懐かしい歌を口ずさむと元気が湧いてきます。", "🌿中吉：読めなかった漢字がすんなり読めるようになる日。",
+                "☀️吉：いつもの風景が少し綺麗に見える、良い日です。", "☀️吉：自販機で当たりが出るくらいの小さな幸せが。",
+                "☀️吉：階段を一段飛ばしで登れるくらい体が軽いよ。", "☀️吉：お気に入りのペンを使うと作業が楽しくなります。",
+                "☀️吉：今日は早寝早起きが一番の開運アクション。", "☀️吉：身近な人の良いところを3つ見つけてみて。",
+                "☀️吉：空気が美味しい！深呼吸を3回しましょう。", "☀️吉：コンビニの新商品が当たりの予感。",
+                "☀️吉：挨拶を自分からすると、思わぬ情報が入ります。", "☀️吉：靴紐をしっかり結び直すと、気が引き締まるよ。",
+                "☀️吉：今日は聞き手に徹すると、みんなに好かれます。", "☀️吉：カバンの中を整理すると、心もスッキリします。",
+                "☀️吉：お気に入りの香りを纏って出かけましょう。", "☀️吉：今日のラッキーナンバーは「7」。",
+                "☀️吉：エレベーターがちょうど一階に止まっている幸運。", "☀️吉：信号が全部青で渡れるかもしれない日！",
+                "☀️吉：久しぶりの友人からスタンプが届くかも。", "☀️吉：昨日より少しだけ成長した自分に気づけます。",
+                "☀️吉：ちょっとしたプレゼントを貰う予感。", "☀️吉：雨が降っても、それは浄化の雨。運気は上向き！",
+                "🌱小吉：足元に気をつけて歩けば、幸運が落ちてるかも。", "🌱小吉：焦らずゆっくり。牛歩の歩みが成功の鍵。",
+                "🌱小吉：今日はインスタントより手作りの味を大切に。", "🌱小吉：スマホを置いて空を見る時間を5分作って。",
+                "🌱小吉：整理整頓がツキを呼びます。デスクの上を拭こう。", "🌱小吉：今日の運勢はこれから自分次第で上げられます。",
+                "🌱小吉：本屋さんの隅っこにある本に運命の出会いが。", "🌱小吉：赤い小物が魔除けと運気アップに。 ",
+                "🌱小吉：ハーブティーを飲むと心が落ち着きます。", "🌱小吉：自分を褒めてあげて。あなたは頑張ってます。",
+                "🌱小吉：ちょっとしたお礼を口に出すと運気停滞を防げます。", "🌱小吉：いつもと違う道を通ると、発見があるかも。",
+                "🌱小吉：鏡を見てニコッと笑ってみて。運が寄ってきます。", "🌱小吉：貯金箱に500円玉を入れると金運の種になります。",
+                "🌱小吉：今日は聞き流す勇気が平和を呼びます。", "🌱小吉：早めのランチが午後の効率を爆上げします。",
+                "🌱小吉：ハンドクリームで手を労わると対人運アップ。", "🌱小吉：忘れていたメモを見返すと、今のヒントがあるかも。",
+                "🌱小吉：今日は白い服があなたの魅力を引き立てます。", "🌱小吉：夕焼けが綺麗に見えたら、明日はもっと良い日！",
+                "☁️末吉：今日は無理せず、現状維持でOK！", "☁️末吉：傘を持って出かけると安心。備えあれば憂いなし。",
+                "☁️末吉：深追いは禁物。引き際が肝心な一日です。", "☁️末吉：SNSを見すぎない方が、心穏やかに過ごせます。",
+                "☁️末吉：爪を整えると、小さな運気が逃げなくなります。", "☁️末吉：温かいスープを飲んで内側から温まって。",
+                "☁️末吉：今日は自分より周りを優先すると後で報われます。", "☁️末吉：失言に注意。一呼吸置いてから話そう。",
+                "☁️末吉：大事な決断は明日以降に持ち越すのが吉。", "☁️末吉：古い雑誌を捨てると、新しい情報が入るスペースが！",
+                "⚡️要注意：今日はとにかく「無理しない」がテーマ。", "⚡️要注意：忘れ物チェックを3回して！特にスマホ。",
+                "⚡️要注意：今日は聞き役に徹するのが正解です。", "⚡️要注意：お財布の紐を固く結んでおきましょう。",
+                "⚡️要注意：深呼吸して落ち着けば、難を逃れられます。", "⚡️要注意：甘いものを食べて自分を甘やかしてあげて。",
+                "⚡️要注意：今日は早めに帰宅して、お気に入りの映画を見よう。", "⚡️要注意：失敗しても大丈夫。それは成功へのデータです。",
+                "⚡️要注意：お守り代わりに好きな音楽を聴いて。", "🌈奇跡：100個目の運勢！今日は伝説の一日になります。"
+            ];
+
+            const n = Math.floor(Math.random() * results.length);
+            const finalResult = results[n];
+
+            // 表示を更新
+            document.getElementById("result").innerText = finalResult;
+            
+            // ボタンを無効化
+            document.getElementById("uranaiBtn").disabled = true;
+
+            // 記憶箱（localStorage）に保存
+            const today = new Date().toLocaleDateString();
+            localStorage.setItem("lastUranaiDate", today);
+            localStorage.setItem("lastUranaiResult", finalResult);
         }
     </script>
 </body>
