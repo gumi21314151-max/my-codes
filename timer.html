@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Gumi-Just-61-Death</title>
+    <style>
+        body { text-align: center; font-family: sans-serif; background: #0f172a; color: white; padding-top: 50px; transition: 0.5s; overflow: hidden; }
+        .container { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 30px; max-width: 550px; margin: auto; border: 3px solid #6366f1; }
+        #timer { font-size: 100px; font-weight: bold; color: #38bdf8; margin: 20px 0; }
+        #game-clock { font-size: 80px; font-weight: bold; color: #10b981; margin: 20px 0; }
+        button { padding: 15px 40px; font-size: 20px; cursor: pointer; border: none; border-radius: 50px; background: #6366f1; color: white; transition: 0.3s; font-weight: bold; }
+        .out-btn { background: #ef4444 !important; animation: shake 0.1s infinite; }
+        
+        /* 🏆 称号デザイン */
+        .title-god { color: gold; font-size: 45px; text-shadow: 0 0 20px #fff; font-weight: bold; }
+        .title-master { color: #ffeb3b; font-size: 35px; }
+        .title-out { color: #ef4444; font-size: 50px; font-weight: bold; text-shadow: 0 0 10px #000; }
+
+        @keyframes shake { 0% { transform: translate(0,0); } 50% { transform: translate(5px, 5px); } 100% { transform: translate(0,0); } }
+        @keyframes rainbow { 0% { background: #ff0000; } 50% { background: #0000ff; } 100% { background: #ff0000; } }
+    </style>
+</head>
+<body>
+    <div class="container" id="main-ui">
+        <h2>📚 宿題計測中（10分でゲーム解放）</h2>
+        <div id="timer">00:00</div>
+        <button id="startBtn" onclick="toggleTimer()">計測スタート</button>
+    </div>
+
+    <div id="game-area" class="container" style="display:none;">
+        <h2>🎮 体内時計 61秒ドボン！</h2>
+        <p>目指せ60.00秒！<br><span style="color:#ef4444; font-weight:bold;">※61.00秒になった瞬間ドボン！</span></p>
+        <div id="game-clock">??.??</div>
+        <button id="gameBtn" onclick="handleGame()">ゲームスタート！</button>
+        <div id="game-result" style="margin-top: 20px; min-height: 120px;"></div>
+    </div>
+
+    <script>
+        let seconds = 0;
+        let timerId = null;
+
+        function toggleTimer() {
+            if (timerId) { clearInterval(timerId); timerId = null; document.getElementById("startBtn").innerText="再開"; } 
+            else { 
+                document.getElementById("startBtn").innerText="集中中...";
+                timerId = setInterval(() => {
+                    seconds++;
+                    let m = Math.floor(seconds / 60);
+                    let s = seconds % 60;
+                    document.getElementById("timer").innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                    if (seconds >= 600) startJust61Game(); 
+                }, 1000); 
+            }
+        }
+
+        let gameActive = false;
+        let startTime = 0;
+        let gameTimerId = null;
+
+        function startJust61Game() {
+            document.getElementById("main-ui").style.display = "none";
+            document.getElementById("game-area").style.display = "block";
+        }
+
+        function handleGame() {
+            const btn = document.getElementById("gameBtn");
+            const clock = document.getElementById("game-clock");
+            const result = document.getElementById("game-result");
+
+            if (!gameActive) {
+                gameActive = true;
+                startTime = Date.now();
+                btn.innerText = "今だ！ストップ！";
+                btn.classList.remove("out-btn");
+                result.innerHTML = "";
+                gameTimerId = setInterval(() => {
+                    let diff = (Date.now() - startTime) / 1000;
+                    if (diff < 3) { clock.innerText = diff.toFixed(2); } 
+                    else { 
+                        clock.innerText = "??.??"; 
+                        document.body.style.background = "#000"; 
+                        // 💀 61.00秒になった瞬間にドボン！
+                        if (diff >= 61.00) { stopGame(diff); }
+                    }
+                }, 10);
+            } else {
+                stopGame((Date.now() - startTime) / 1000);
+            }
+        }
+
+        function stopGame(finalTime) {
+            gameActive = false;
+            clearInterval(gameTimerId);
+            const btn = document.getElementById("gameBtn");
+            const clock = document.getElementById("game-clock");
+            const result = document.getElementById("game-result");
+
+            clock.innerText = finalTime.toFixed(2);
+            document.body.style.background = "#0f172a";
+            btn.innerText = "再挑戦（10分宿題に戻る）";
+            btn.onclick = () => location.reload();
+
+            if (finalTime >= 61.00) {
+                // 💀 ドボン演出
+                result.innerHTML = "<div class='title-out'>🌊 ドボン！(61秒超え)</div><p>深追いしすぎだ！宿題修行に戻れ！</p>";
+                btn.classList.add("out-btn");
+                document.body.style.background = "#450a0a"; // 画面を赤黒く
+            } else {
+                let diff = Math.abs(60 - finalTime);
+                if (diff <= 0.05) {
+                    result.innerHTML = "<div class='title-god'>👑 神：伝説の職人！</div><p>誤差わずか " + diff.toFixed(2) + "秒！</p>";
+                    document.body.style.animation = "rainbow 0.5s infinite linear";
+                } else if (finalTime >= 60.00 && finalTime < 61.00) {
+                    result.innerHTML = "<div class='title-master'>🔥 職人：極限のチキンレース成功！</div><p>1分を超えて耐え抜いた！</p>";
+                } else if (diff <= 0.5) {
+                    result.innerHTML = "<div class='title-master'>🎯 達人：プロの感覚！</div>";
+                } else {
+                    result.innerHTML = "<div>🌱 初心者：まだまだ修行不足！</div>";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
