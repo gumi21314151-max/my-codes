@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>グミの1000日に一度の奇跡占い</title>
+    <title>グミの1000日に一度の奇跡占い DX</title>
     <style>
-        /* 🌌 宇宙をイメージした背景 */
+        /* 🌌 宇宙をイメージした背景 + 星屑 */
         body { 
             text-align: center; 
             font-family: 'Hiragino Kaku Gothic ProN', sans-serif; 
@@ -16,19 +16,35 @@
             transition: 1.5s; 
             overflow: hidden;
             height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        /* ✨ 背景に星を散らすための装飾 */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: blink 2s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
         .container { 
+            position: relative;
+            z-index: 10;
             background: rgba(0, 0, 0, 0.7); 
             padding: 40px; 
             border-radius: 30px; 
             border: 1px solid rgba(255,255,255,0.2);
             box-shadow: 0 0 40px rgba(0,0,0,0.9); 
             max-width: 550px; 
-            margin: auto; 
+            width: 90%;
         }
         h1 { color: #00d2ff; text-shadow: 0 0 15px #00d2ff; letter-spacing: 2px; }
         
-        /* 🔘 ボタンのデザイン */
         button { 
             padding: 20px 50px; 
             font-size: 22px; 
@@ -45,19 +61,34 @@
         button:active { transform: translateY(4px); box-shadow: 0 2px #a02040; }
         button:disabled { background: #444; box-shadow: none; cursor: not-allowed; opacity: 0.6; }
 
-        /* 🔮 結果表示 */
         #result { 
             font-size: 26px; 
-            margin-top: 40px; 
+            margin-top: 30px; 
             line-height: 1.8; 
-            min-height: 150px; 
+            min-height: 120px; 
             display: flex; 
+            flex-direction: column;
             align-items: center; 
             justify-content: center; 
             font-weight: bold;
         }
 
-        /* ✨ 0.1%の奇跡：虹色爆発演出 */
+        /* 🕒 カウントダウン表示 */
+        #timer { font-size: 14px; color: #aaa; margin-top: 10px; }
+
+        /* 🐦 X(Twitter)共有ボタン */
+        #shareBtn {
+            margin-top: 20px;
+            display: none;
+            padding: 10px 20px;
+            background: #000;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
         @keyframes rainbow-bg {
             0% { background: #ff0000; } 16% { background: #ffff00; } 33% { background: #00ff00; }
             50% { background: #00ffff; } 66% { background: #0000ff; } 83% { background: #ff00ff; } 100% { background: #ff0000; }
@@ -67,79 +98,95 @@
             30% { transform: translate(5px, 5px); } 50% { transform: translate(-5px, 5px); }
             70% { transform: translate(5px, -5px); } 100% { transform: translate(0,0); }
         }
-        .rare-mode { 
-            animation: rainbow-bg 0.5s infinite linear !important; /* 高速虹色 */
-        }
-        .rare-text { 
-            animation: shake 0.1s infinite; 
-            font-size: 40px !important; 
-            color: #fff !important;
-            text-shadow: 0 0 20px #000, 0 0 40px #fff;
-        }
+        .rare-mode { animation: rainbow-bg 0.5s infinite linear !important; }
+        .rare-text { animation: shake 0.1s infinite; font-size: 35px !important; text-shadow: 0 0 20px #fff; }
     </style>
 </head>
 <body>
+    <div id="stars"></div> <!-- 星を出す場所 -->
     <div class="container">
-        <h1>🔮 1000日に一度の奇跡鑑定 🔮</h1>
-        <p>1日1回。0.1%の「奇跡」を掴み取れ。</p>
+        <h1>🔮 奇跡鑑定 DX 🔮</h1>
+        <p>0.1%の「奇跡」を掴み取れ。</p>
         <button id="uranaiBtn" onclick="uranai()">運命を占う</button>
         <div id="result">心を研ぎ澄ませて待て</div>
+        <div id="timer"></div>
+        <a id="shareBtn" target="_blank">𝕏 で結果を報告する</a>
     </div>
 
     <script>
-        window.onload = function() {
-            const today = new Date().toLocaleDateString();
-            const lastDate = localStorage.getItem("lastUranaiDate");
-            const lastResult = localStorage.getItem("lastUranaiResult");
+        // 🌟 背景に星を生成
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+        }
 
-            if (lastDate === today) {
-                renderResult(lastResult);
-                document.getElementById("uranaiBtn").disabled = true;
-            }
+        window.onload = function() {
+            checkStatus();
+            setInterval(updateTimer, 1000); // 1秒ごとにタイマー更新
         };
 
+        function checkStatus() {
+            const today = new Date().toLocaleDateString();
+            const lastDate = localStorage.getItem("lastUranaiDate");
+            if (lastDate === today) {
+                renderResult(localStorage.getItem("lastUranaiResult"));
+                document.getElementById("uranaiBtn").disabled = true;
+            }
+        }
+
         function uranai() {
-            const r = Math.random() * 100; // 0.000〜100.000の乱数
+            const r = Math.random() * 100;
             let finalResult = "";
 
-            // 🎲 究極の確率抽選
-            if (r < 0.1) { 
-                // 【0.1%：伝説】
-                finalResult = "🌈奇跡：1000日に一度の神引き！今日は伝説の一日になります。";
-            } else if (r < 3.0) { 
-                // 【2.9%：超大吉】
-                finalResult = "✨超大吉：宇宙があなたを祝福しています！";
-            } else if (r < 20.0) { 
-                // 【17%：大吉】
-                finalResult = "✨大吉：最高の一日！何をやってもうまくいきます。";
-            } else if (r < 50.0) { 
-                // 【30%：中吉】
-                finalResult = "🌿中吉：穏やかで優しい時間が流れるでしょう。";
-            } else { 
-                // 【50%：吉・その他】
-                finalResult = "☀️吉：いつもの日常が少しだけ輝く、そんな日です。";
-            }
+            if (r < 0.1) finalResult = "🌈奇跡：1000日に一度の神引き！伝説の一日確定。";
+            else if (r < 3.0) finalResult = "✨超大吉：宇宙があなたを祝福しています！";
+            else if (r < 20.0) finalResult = "✨大吉：最高の一日！何をやってもうまくいきます。";
+            else if (r < 50.0) finalResult = "🌿中吉：穏やかで優しい時間が流れるでしょう。";
+            else finalResult = "☀️吉：いつもの日常が少しだけ輝く日です。";
 
-            renderResult(finalResult);
-
-            // 保存
-            const today = new Date().toLocaleDateString();
-            localStorage.setItem("lastUranaiDate", today);
+            localStorage.setItem("lastUranaiDate", new Date().toLocaleDateString());
             localStorage.setItem("lastUranaiResult", finalResult);
+            renderResult(finalResult);
             document.getElementById("uranaiBtn").disabled = true;
         }
 
         function renderResult(text) {
             const resDiv = document.getElementById("result");
+            const shareBtn = document.getElementById("shareBtn");
             resDiv.innerText = text;
 
-            // 💎 0.1%を引き当てた時の演出
             if (text.includes("奇跡")) {
                 document.body.classList.add("rare-mode");
                 resDiv.classList.add("rare-text");
-            } else if (text.includes("超大吉")) {
-                // 超大吉はゆっくり虹色
-                document.body.style.animation = "rainbow-bg 5s infinite linear";
+            }
+
+            // SNS共有リンク作成
+            const tweetText = encodeURIComponent("【グミの奇跡占い】結果は… " + text + "\n#奇跡占い #プログラミング学習中");
+            shareBtn.href = `https://twitter.com{tweetText}`;
+            shareBtn.style.display = "inline-block";
+        }
+
+        function updateTimer() {
+            const lastDate = localStorage.getItem("lastUranaiDate");
+            if (!lastDate) return;
+
+            const now = new Date();
+            const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+            const diff = tomorrow - now;
+
+            const h = Math.floor(diff / 1000 / 60 / 60);
+            const m = Math.floor(diff / 1000 / 60) % 60;
+            const s = Math.floor(diff / 1000) % 60;
+            
+            if (lastDate === now.toLocaleDateString()) {
+                document.getElementById("timer").innerText = `次の鑑定まで：${h}時間${m}分${s}秒`;
             }
         }
     </script>
