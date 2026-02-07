@@ -28,7 +28,7 @@ function uranai() {
     const lucky = results[Math.floor(Math.random() * results.length)];
     document.getElementById("result").innerText = lucky;
 
-    // ↓ここが修正ポイント！引用符を半角に直しました
+    // 正しいURLと合言葉を設定しました
     const siteUrl = "https://gumi21314151-max.github.io";
     const text = "今日の運勢は「" + lucky + "」でした！ #gumi占い";
     const xUrl = "https://twitter.com" + encodeURIComponent(siteUrl) + "&text=" + encodeURIComponent(text);
