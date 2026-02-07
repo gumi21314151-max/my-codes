@@ -2,38 +2,89 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>gumiの運勢占い</title>
+    <title>宇宙の運勢占い</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #fff0f5; }
-        .box { background: white; padding: 30px; border-radius: 20px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h1 { color: #ff69b4; }
-        button { background: #ff69b4; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-size: 18px; }
-        #result { margin-top: 20px; font-size: 24px; font-weight: bold; color: #333; }
-        .share-btn { margin-top: 30px; display: inline-block; background: #1da1f2; color: white; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-size: 14px; }
+        /* 宇宙空間のデザイン */
+        body { 
+            background-color: #000022; 
+            color: #fff; 
+            font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
+            text-align: center; 
+            padding: 50px;
+            background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+                              radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px);
+            background-size: 550px 550px, 350px 350px;
+        }
+        .box { 
+            border: 2px solid #4444ff; 
+            padding: 30px; 
+            border-radius: 20px; 
+            display: inline-block; 
+            background: rgba(0, 0, 50, 0.8);
+            box-shadow: 0 0 20px #4444ff;
+        }
+        h1 { color: #8888ff; text-shadow: 0 0 10px #8888ff; }
+        button { 
+            background: linear-gradient(45deg, #000088, #4444ff); 
+            color: white; border: none; padding: 12px 24px; 
+            border-radius: 30px; cursor: pointer; font-size: 18px; 
+            box-shadow: 0 0 10px #4444ff;
+        }
+        button:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+        #result { margin-top: 20px; font-size: 26px; font-weight: bold; color: #ff00ff; text-shadow: 0 0 5px #fff; }
+        .share-btn { 
+            margin-top: 30px; display: inline-block; background: #000; color: white; 
+            padding: 10px 20px; border: 1px solid #fff; border-radius: 5px; 
+            text-decoration: none; font-size: 14px; 
+        }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h1>🔮 運勢占い 🔮</h1>
-    <p>あなたの今日の運勢は？</p>
-    <button onclick="uranai()">占う！</button>
-    <div id="result">ここに結果が表示されます</div>
-    <a id="shareX" class="share-btn" href="#" target="_blank">Xで報告する</a>
+    <h1>🌌 宇宙の運勢占い 🌌</h1>
+    <p>運命は星が決める。チャンスは1日1回。</p>
+    <button id="uranaiBtn" onclick="uranai()">星に尋ねる</button>
+    <div id="result"></div>
+    <a id="shareX" class="share-btn" style="display:none;" target="_blank">Xで結果を報告する</a>
 </div>
 
 <script>
-function uranai() {
-    const results = ["大吉 🌟 最高！", "中吉 😊 いいね", "小吉 ☘️ ふつう", "吉 ✨ ラッキー", "凶 👻 おっちょこちょいに注意"];
-    const lucky = results[Math.floor(Math.random() * results.length)];
-    document.getElementById("result").innerText = lucky;
+// ページを開いた時に、今日すでに占ったかチェック
+window.onload = function() {
+    const lastDate = localStorage.getItem('lastUranaiDate');
+    const today = new Date().toLocaleDateString();
+    if (lastDate === today) {
+        document.getElementById("uranaiBtn").disabled = true;
+        document.getElementById("result").innerText = "今日の占いはもう終わったよ。また明日ね。";
+        // 前の結果も出しておくならここ
+        const lastResult = localStorage.getItem('lastResult');
+        if(lastResult) showXButton(lastResult);
+    }
+};
 
-    // 正しいURLと合言葉を設定しました
+function uranai() {
+    const results = ["超新星爆発級の幸運 🌟", "銀河一のラッキー 🌌", "ブラックホールに注意 🌀", "流れ星の願いが叶う ✨", "無重力な気分 👨‍🚀"];
+    const lucky = results[Math.floor(Math.random() * results.length)];
+    
+    document.getElementById("result").innerText = lucky;
+    document.getElementById("uranaiBtn").disabled = true;
+
+    // 今日占ったことを保存
+    localStorage.setItem('lastUranaiDate', new Date().toLocaleDateString());
+    localStorage.setItem('lastResult', lucky);
+
+    showXButton(lucky);
+}
+
+function showXButton(lucky) {
     const siteUrl = "https://gumi21314151-max.github.io";
-    const text = "今日の運勢は「" + lucky + "」でした！ #gumi占い";
+    const text = "今日の宇宙占いの結果は「" + lucky + "」でした！";
     const xUrl = "https://twitter.com" + encodeURIComponent(siteUrl) + "&text=" + encodeURIComponent(text);
     
-    document.getElementById("shareX").href = xUrl;
+    const shareBtn = document.getElementById("shareX");
+    shareBtn.href = xUrl;
+    shareBtn.style.display = "inline-block";
 }
 </script>
 
