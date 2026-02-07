@@ -19,20 +19,19 @@
     <p>あなたの今日の運勢は？</p>
     <button onclick="uranai()">占う！</button>
     <div id="result">ここに結果が表示されます</div>
-
-    <!-- ここがXの報告ボタン！URLをあなたのサイトの住所に固定しました -->
     <a id="shareX" class="share-btn" href="#" target="_blank">Xで報告する</a>
 </div>
 
 <script>
+// ここから下が命令（スクリプト）です！
 function uranai() {
-    const results = ["大吉 🌟 最高の一日！", "中吉 😊 いいことあるかも", "小吉 ☘️ 平穏な一日", "吉 ✨ ラッキー！", "凶 👻 お家でゆっくりしよう"];
+    const results = ["大吉 🌟 最高！", "中吉 😊 いいね", "小吉 ☘️ ふつう", "吉 ✨ ラッキー", "凶 👻 おっちょこちょいに注意"];
     const lucky = results[Math.floor(Math.random() * results.length)];
     document.getElementById("result").innerText = lucky;
 
-    // Xのシェア用URLを作ります
+    // あなたの正しいサイトURLをここに書きました！
     const siteUrl = "https://gumi21314151-max.github.io";
-    const text = "今日の運勢は「" + lucky + "」でした！みんなも占ってみて！";
+    const text = "今日の運勢は「" + lucky + "」でした！ #gumi占い";
     const xUrl = "https://twitter.com" + encodeURIComponent(siteUrl) + "&text=" + encodeURIComponent(text);
     
     document.getElementById("shareX").href = xUrl;
