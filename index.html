@@ -10,7 +10,6 @@
         button { background: linear-gradient(45deg, #000088, #4444ff); color: white; border: none; padding: 12px 24px; border-radius: 30px; cursor: pointer; font-size: 18px; }
         button:disabled { background: #555; cursor: not-allowed; }
         #result { margin-top: 20px; font-size: 26px; font-weight: bold; color: #ff00ff; }
-        .share-btn { margin-top: 30px; display: inline-block; background: #fff; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -20,19 +19,15 @@
     <p>運命は星が決める。チャンスは1日1回。</p>
     <button id="uranaiBtn" onclick="uranai()">星に尋ねる</button>
     <div id="result"></div>
-    <a id="shareX" class="share-btn" style="display:none;" target="_blank">Xで結果を報告する</a>
 </div>
 
 <script>
-// 1日1回の制限
 window.onload = function() {
     const lastDate = localStorage.getItem('lastUranaiDate');
     const today = new Date().toLocaleDateString();
     if (lastDate === today) {
         document.getElementById("uranaiBtn").disabled = true;
         document.getElementById("result").innerText = "今日の占いは終わり。また明日！";
-        const lastResult = localStorage.getItem('lastResult');
-        if(lastResult) showXButton(lastResult);
     }
 };
 
@@ -42,20 +37,6 @@ function uranai() {
     document.getElementById("result").innerText = lucky;
     document.getElementById("uranaiBtn").disabled = true;
     localStorage.setItem('lastUranaiDate', new Date().toLocaleDateString());
-    localStorage.setItem('lastResult', lucky);
-    showXButton(lucky);
-}
-
-// Xボタンを正しく動かす命令
-function showXButton(lucky) {
-    const siteUrl = "https://gumi21314151-max.github.io";
-    const text = "今日の宇宙占いの結果は「" + lucky + "」でした！";
-    // ↓ここを修正しました！「/intent/tweet?url=」を追加
-    const xUrl = "https://twitter.com" + encodeURIComponent(siteUrl) + "&text=" + encodeURIComponent(text);
-    
-    const shareBtn = document.getElementById("shareX");
-    shareBtn.href = xUrl;
-    shareBtn.style.display = "inline-block";
 }
 </script>
 
