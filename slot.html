@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Gumi-Destiny-Slot | 運命の選択</title>
+    <style>
+        body { text-align: center; font-family: sans-serif; background: #1a1a2e; color: white; padding-top: 50px; transition: 0.5s; overflow: hidden; }
+        .container { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 30px; max-width: 500px; margin: auto; border: 2px solid #e94560; }
+        
+        /* 🎰 スロット表示部 */
+        #slot-window { font-size: 40px; font-weight: bold; background: #16213e; padding: 40px; border-radius: 20px; border: 4px solid #e94560; margin-bottom: 20px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #00d2ff; }
+
+        /* ✍️ 入力エリア */
+        .inputs { display: grid; gap: 10px; margin-bottom: 20px; }
+        input { padding: 10px; border-radius: 5px; border: none; font-size: 16px; background: #0f172a; color: white; text-align: center; }
+        
+        button { padding: 15px 40px; font-size: 20px; cursor: pointer; border: none; border-radius: 50px; background: #e94560; color: white; font-weight: bold; box-shadow: 0 5px #a02040; }
+        button:active { transform: translateY(3px); box-shadow: 0 2px #a02040; }
+
+        /* ✨ 0.1% 奇跡演出 */
+        @keyframes rainbow { 0% { background: red; } 50% { background: blue; } 100% { background: red; } }
+        .rare-mode { animation: rainbow 0.2s infinite linear !important; }
+        .rare-text { font-size: 60px !important; color: gold !important; text-shadow: 0 0 20px #fff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎰 運命の選択スロット</h1>
+        <p>迷っている項目を2〜4つ入力せよ</p>
+        
+        <div class="inputs">
+            <input type="text" id="opt1" placeholder="項目1（例：カレー）" value="カレー">
+            <input type="text" id="opt2" placeholder="項目2（例：ハンバーグ）" value="ハンバーグ">
+            <input type="text" id="opt3" placeholder="項目3（空欄OK）">
+            <input type="text" id="opt4" placeholder="項目4（空欄OK）">
+        </div>
+
+        <div id="slot-window">Ready?</div>
+        
+        <button id="spinBtn" onclick="spin()">運命を回す！</button>
+    </div>
+
+    <script>
+        function spin() {
+            const btn = document.getElementById("spinBtn");
+            const window = document.getElementById("slot-window");
+            const options = [
+                document.getElementById("opt1").value,
+                document.getElementById("opt2").value,
+                document.getElementById("opt3").value,
+                document.getElementById("opt4").value
+            ].filter(v => v !== ""); // 空欄を除外
+
+            if (options.length < 2) {
+                alert("項目を2つ以上入れてね！");
+                return;
+            }
+
+            btn.disabled = true;
+            document.body.classList.remove("rare-mode");
+            window.classList.remove("rare-text");
+
+            // 🎰 シャッフル演出
+            let count = 0;
+            const timer = setInterval(() => {
+                window.innerText = options[Math.floor(Math.random() * options.length)];
+                count++;
+                if (count > 20) {
+                    clearInterval(timer);
+                    determineResult(options);
+                    btn.disabled = false;
+                }
+            }, 50);
+        }
+
+        function determineResult(options) {
+            const window = document.getElementById("slot-window");
+            const r = Math.random() * 100;
+
+            // 🎲 0.1% の奇跡判定
+            if (r < 0.1) {
+                window.innerText = "🌈 全部やる・全部食べる！";
+                document.body.classList.add("rare-mode");
+                window.classList.add("rare-text");
+            } else {
+                // 通常の抽選
+                window.innerText = options[Math.floor(Math.random() * options.length)];
+            }
+        }
+    </script>
+</body>
+</html>
