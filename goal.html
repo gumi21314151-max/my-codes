@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Gumi-Countdown-Board</title>
+    <style>
+        body { text-align: center; font-family: sans-serif; background: #050505; color: white; padding-top: 60px; }
+        .container { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 30px; max-width: 600px; margin: auto; border: 2px solid #ec4899; box-shadow: 0 0 30px #ec489955; }
+        h1 { color: #ec4899; letter-spacing: 2px; }
+        
+        #target-name { font-size: 24px; color: #f472b6; margin-bottom: 20px; }
+        
+        /* カウントダウンの数字部分 */
+        .timer-grid { display: flex; justify-content: center; gap: 20px; }
+        .time-box { background: #1a1a1a; padding: 20px; border-radius: 15px; min-width: 100px; border: 1px solid #333; }
+        .number { font-size: 40px; font-weight: bold; color: #fff; font-family: monospace; }
+        .label { font-size: 14px; color: #888; }
+
+        input[type="date"] { padding: 10px; border-radius: 10px; border: none; margin-top: 30px; font-size: 16px; }
+        .hint { margin-top: 20px; color: #666; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 目標カウントダウン</h1>
+        <div id="target-name">次の目標まで…</div>
+        
+        <div class="timer-grid">
+            <div class="time-box"><div id="days" class="number">00</div><div class="label">日</div></div>
+            <div class="time-box"><div id="hours" class="number">00</div><div class="label">時間</div></div>
+            <div class="time-box"><div id="mins" class="number">00</div><div class="label">分</div></div>
+            <div class="time-box"><div id="secs" class="number">00</div><div class="label">秒</div></div>
+        </div>
+
+        <input type="date" id="date-input" onchange="setTarget()">
+        <p class="hint">目標の日付を選んでください（例：春休み、誕生日など）</p>
+    </div>
+
+    <script>
+        let targetDate = localStorage.getItem('gumiTargetDate') || "";
+        if(targetDate) {
+            document.getElementById('date-input').value = targetDate;
+        }
+
+        function setTarget() {
+            const val = document.getElementById('date-input').value;
+            localStorage.setItem('gumiTargetDate', val);
+            targetDate = val;
+        }
+
+        function updateTimer() {
+            if(!targetDate) return;
+            
+            const now = new Date();
+            const target = new Date(targetDate);
+            const diff = target - now;
+
+            if(diff <= 0) {
+                document.getElementById('target-name').innerText = "🎉 目標の日になりました！";
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / (1000 * 60)) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('mins').innerText = m.toString().padStart(2, '0');
+            document.getElementById('secs').innerText = s.toString().padStart(2, '0');
+        }
+
+        setInterval(updateDisplay => {
+            updateTimer();
+        }, 1000);
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Gumi-Countdown-Board</title>
+    <style>
+        body { text-align: center; font-family: sans-serif; background: #050505; color: white; padding-top: 60px; }
+        .container { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 30px; max-width: 600px; margin: auto; border: 2px solid #ec4899; box-shadow: 0 0 30px #ec489955; }
+        h1 { color: #ec4899; letter-spacing: 2px; }
+        
+        #target-name { font-size: 24px; color: #f472b6; margin-bottom: 20px; }
+        
+        /* カウントダウンの数字部分 */
+        .timer-grid { display: flex; justify-content: center; gap: 20px; }
+        .time-box { background: #1a1a1a; padding: 20px; border-radius: 15px; min-width: 100px; border: 1px solid #333; }
+        .number { font-size: 40px; font-weight: bold; color: #fff; font-family: monospace; }
+        .label { font-size: 14px; color: #888; }
+
+        input[type="date"] { padding: 10px; border-radius: 10px; border: none; margin-top: 30px; font-size: 16px; }
+        .hint { margin-top: 20px; color: #666; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 目標カウントダウン</h1>
+        <div id="target-name">次の目標まで…</div>
+        
+        <div class="timer-grid">
+            <div class="time-box"><div id="days" class="number">00</div><div class="label">日</div></div>
+            <div class="time-box"><div id="hours" class="number">00</div><div class="label">時間</div></div>
+            <div class="time-box"><div id="mins" class="number">00</div><div class="label">分</div></div>
+            <div class="time-box"><div id="secs" class="number">00</div><div class="label">秒</div></div>
+        </div>
+
+        <input type="date" id="date-input" onchange="setTarget()">
+        <p class="hint">目標の日付を選んでください（例：春休み、誕生日など）</p>
+    </div>
+
+    <script>
+        let targetDate = localStorage.getItem('gumiTargetDate') || "";
+        if(targetDate) {
+            document.getElementById('date-input').value = targetDate;
+        }
+
+        function setTarget() {
+            const val = document.getElementById('date-input').value;
+            localStorage.setItem('gumiTargetDate', val);
+            targetDate = val;
+        }
+
+        function updateTimer() {
+            if(!targetDate) return;
+            
+            const now = new Date();
+            const target = new Date(targetDate);
+            const diff = target - now;
+
+            if(diff <= 0) {
+                document.getElementById('target-name').innerText = "🎉 目標の日になりました！";
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / (1000 * 60)) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('mins').innerText = m.toString().padStart(2, '0');
+            document.getElementById('secs').innerText = s.toString().padStart(2, '0');
+        }
+
+        setInterval(updateDisplay => {
+            updateTimer();
+        }, 1000);
+    </script>
+</body>
+</html>
