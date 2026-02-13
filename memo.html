@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>曜日別メモ帳</title>
+    <style>
+        /* 曜日ごとに色が変わるように設定 */
+        :root { --day-color: #ff00ff; }
+        body { background: #111; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding-top: 50px; }
+        
+        .card { background: #222; border: 2px solid var(--day-color); border-radius: 20px; padding: 30px; width: 500px; box-shadow: 0 0 20px var(--day-color); }
+        h1 { color: var(--day-color); text-shadow: 0 0 10px var(--day-color); margin-top: 0; }
+        
+        textarea { width: 100%; height: 250px; background: #000; color: #fff; border: 1px solid #444; border-radius: 10px; padding: 15px; font-size: 1.1rem; outline: none; box-sizing: border-box; resize: none; }
+        textarea:focus { border-color: var(--day-color); }
+
+        .hint { margin-top: 15px; color: #888; font-size: 0.8rem; }
+    </style>
+</head>
+<body id="bg">
+
+    <div class="card">
+        <h1 id="day-label">MONDAY MEMO</h1>
+        <textarea id="memo-area" placeholder="ここにやることを書くと、自動で保存されるよ！"></textarea>
+        <p class="hint">※文字を書くと、この曜日のメモとして保存されます</p>
+    </div>
+
+    <script>
+        const dayNames = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+        const dayColors = ["#ff4b2b", "#2b58ff", "#2bff58", "#ffec2b", "#ff2bf2", "#2bfff2", "#ff9d2b"];
+        
+        const now = new Date();
+        const dayIndex = now.getDay(); // 今日の曜日(0-6)
+        const todayName = dayNames[dayIndex];
+        
+        // 1. 画面の見た目を今日の曜日に合わせる
+        document.getElementById('day-label').innerText = todayName + " MEMO";
+        document.documentElement.style.setProperty('--day-color', dayColors[dayIndex]);
+
+        // 2. 保存されたメモを読み込む
+        const memoArea = document.getElementById('memo-area');
+        const storageKey = "memo_" + todayName; // 曜日ごとの保存キー
+        memoArea.value = localStorage.getItem(storageKey) || "";
+
+        // 3. 文字を打つたびに「自動保存」する魔法
+        memoArea.addEventListener('input', function() {
+            localStorage.setItem(storageKey, memoArea.value);
+            console.log(todayName + "のメモを保存したよ！");
+        });
+    </script>
+</body>
+</html>
