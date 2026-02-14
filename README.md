@@ -6,19 +6,19 @@
 
 ### 💼 公開中の実績（エンジニア・グミ選定）
 
-- **[🎰 運命の選択スロット](https://gumi21314151-max.github.io)** **【最新作】**
+- **[🎰 運命の選択スロット](https://gumi21314151-max.github.io/my-codes/slot.html)** **【最新作】**
   2〜4つの選択肢をセットして運命を委ねるスロット。0.1%で「全部やる」が出る激レア演出搭載。
 
-- **[🎯 目標カウントダウン・マネージャー](https://gumi21314151-max.github.io)**
+- **[🎯 目標カウントダウン・マネージャー](https://gumi21314151-max.github.io/my-codes/goal.html)**
   次のテストや楽しみなイベントまでを「1秒刻み」で表示するストイックな管理ツール。
 
-- **[🗓️ 曜日別インテリジェント・メモ帳](https://gumi21314151-max.github.io)**
+- **[🗓️ 曜日別インテリジェント・メモ帳](https://gumi21314151-max.github.io/my-codes/memo.html)**
   曜日で背景色が自動変化。保存場所も曜日ごとに独立する、実用性を極めたメモ帳。
 
-- **[📚 61秒ドボン！集中タイマー](https://gumi21314151-max.github.io)**
+- **[📚 61秒ドボン！集中タイマー](https://gumi21314151-max.github.io/my-codes/timer.html)**
   10分全力宿題 ⇄ 1分チキンレース。61.00秒を超えたら即ドボンのスリル。
 
-- **[🔮 100段階・究極運勢鑑定](https://gumi21314151-max.github.io)**
+- **[🔮 100段階・究極運勢鑑定](https://gumi21314151-max.github.io/my-codes/index.html)**
   1日1回限定。0.1%の「虹色・奇跡演出」を搭載した、グミ・エンジニアリングの原点。
 
 - **[📈 Python・株価リアルタイム分析器](./stock_analyzer.py)**
