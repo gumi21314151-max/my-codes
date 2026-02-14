@@ -5,7 +5,7 @@
 **【🚀 タイトルをクリックすると各アプリが即座に起動します】**
 
 ### 💼 公開中の実績（エンジニア・グミ選定）
-- **[💥 Gumi-Critical-Clicker](https://gumi21314151-max.github.io/my-codes/clicker.html)** **【最新作】**
+- **[💥 10秒クリックゲーム](https://gumi21314151-max.github.io/my-codes/)** **【最新作】**
   10秒間の限界連打ゲーム。0.1%の確率で「攻撃力100倍」のクリティカルモードが発動する、ストレス発散ツール。
 
 - **[🎰 運命の選択スロット](https://gumi21314151-max.github.io/my-codes/slot.html)** 
