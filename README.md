@@ -23,7 +23,7 @@
 - **[🔮 100段階・究極運勢鑑定](https://gumi21314151-max.github.io/my-codes/index.html)**
   1日1回限定。0.1%の「虹色・奇跡演出」を搭載した、グミ・エンジニアリングの原点。
 
-- **[📈 Python・株価リアルタイム分析器](./stock_analyzer.py)**
+- **[📈 Python・株価リアルタイム分析器](https://github.com/gumi21314151-max/my-codes/commit/b9e19d27f5300f9c03d84cc9d2454af02dde1342)**
   Pandasを駆使し、株価の変動を視覚的に判定する本格データ分析ツール。
 
 ---
