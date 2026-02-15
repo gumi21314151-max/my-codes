@@ -5,7 +5,7 @@
 **【🚀 タイトルをクリックすると各アプリが即座に起動します】**
 
 ### 💼 公開中の実績（エンジニア・グミ選定）
-- **[📋コピペの神様]最新作(https://github.com/gumi21314151-max/my-codes/blob/main/kopi.py)**
+- **[📋コピペの神様][最新作](https://github.com/gumi21314151-max/my-codes/blob/main/kopi.py)**
  8連装ストック: AからLまで、過去のコピーを最大8世代まで時空保存。 
 
 - **[🎰 運命の選択スロット](https://gumi21314151-max.github.io/my-codes/slot.html)** 
