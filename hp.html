@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>GUMI Life Battery | 鉄の掟モード</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-align: center; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .container { width: 90%; max-width: 450px; padding: 40px; border: 2px solid #111; border-radius: 30px; background: #050505; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        
+        .battery-case { width: 100%; height: 70px; border: 4px solid #fff; border-radius: 15px; position: relative; padding: 5px; box-sizing: border-box; }
+        .battery-case::after { content: ''; position: absolute; right: -15px; top: 18px; width: 10px; height: 25px; background: #fff; border-radius: 0 5px 5px 0; }
+        
+        .battery-level { height: 100%; width: 100%; background: #10b981; transition: 0.5s; }
+        .status-text { font-size: 60px; font-weight: bold; margin: 10px 0; letter-spacing: -2px; }
+        
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        button { padding: 18px; border-radius: 15px; border: none; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.2s; }
+        button:active { transform: scale(0.95); }
+        
+        .btn-eat { background: #f472b6; color: white; grid-column: span 2; box-shadow: 0 4px #be185d; }
+        .btn-eat:disabled { background: #111; color: #333; cursor: not-allowed; box-shadow: none; }
+        .btn-little { background: #475569; color: white; box-shadow: 0 4px #1e293b; }
+        .btn-tired { background: #1e293b; color: #ef4444; border: 1px solid #7f1d1d; box-shadow: 0 4px #000; }
+
+        #sleep-ui { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; flex-direction: column; align-items: center; justify-content: center; z-index: 999; }
+        @keyframes low-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+        .low-battery { background: #ef4444 !important; animation: low-blink 0.5s infinite; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="ui">
+    <div class="battery-case"><div id="bar" class="battery-level"></div></div>
+    <div id="percent" class="status-text">100%</div>
+    <div class="controls">
+        <button id="eatBtn" class="btn-eat" onclick="eat()">飯を食う (+15%)</button>
+        <button class="btn-little" onclick="tired(5)">ちょっと疲れた (-5%)</button>
+        <button class="btn-tired" onclick="tired(10)">疲れ倒したー！ (-10%)</button>
+    </div>
+    <p style="margin-top:25px; color:#222; font-size:10px; letter-spacing: 1px;">AUTO RECOVERY AT 05:00 AM</p>
+</div>
+
+<div id="sleep-ui">
+    <div style="font-size:32px; color:#1a1a1a; font-weight:bold; letter-spacing: 4px;">SYSTEM SHUTDOWN</div>
+    <p style="font-size: 18px; margin-top: 20px; color: #0a0a0a;">本日の活動限界を超えました。<br>朝5時まで再起動不可。💤</p>
+</div>
+
+<script>
+    let hp = 100;
+    let mealFlags = { morning: false, lunch: false, dinner: false };
+    
+    // 永続化のためのキー
+    const STORAGE_KEY = 'gumi_hp_val';
+    const MEAL_KEY = 'gumi_meal_flags';
+    const RESET_KEY = 'gumi_last_reset_date';
+
+    function update() {
+        const now = new Date();
+        const timeDec = now.getHours() + (now.getMinutes() / 60);
+        const todayStr = now.toDateString();
+
+        // 朝5時の全回復チェック
+        if (now.getHours() >= 5 && localStorage.getItem(RESET_KEY) !== todayStr) {
+            hp = 100;
+            mealFlags = { morning: false, lunch: false, dinner: false };
+            localStorage.setItem(RESET_KEY, todayStr);
+            localStorage.setItem(STORAGE_KEY, hp);
+            localStorage.setItem(MEAL_KEY, JSON.stringify(mealFlags));
+        } else {
+            // 保存データがあれば読み込み（初回以外）
+            hp = parseFloat(localStorage.getItem(STORAGE_KEY)) || 100;
+            mealFlags = JSON.parse(localStorage.getItem(MEAL_KEY)) || { morning: false, lunch: false, dinner: false };
+        }
+
+        // 🚨 20:30 強制終了判定
+        if (timeDec >= 20.5 || hp <= 0) {
+            hp = 0;
+            document.getElementById('ui').style.display = 'none';
+            document.getElementById('sleep-ui').style.display = 'flex';
+        }
+
+        document.getElementById('bar').style.width = hp + "%";
+        document.getElementById('percent').innerText = Math.floor(hp) + "%";
+
+        // 食事判定
+        let canEat = (timeDec <= 8) || (timeDec >= 11 && timeDec <= 13.5) || (timeDec >= 18 && timeDec <= 20);
+        let type = (timeDec <= 8) ? "morning" : (timeDec >= 11 && timeDec <= 13.5) ? "lunch" : "dinner";
+        document.getElementById('eatBtn').disabled = !canEat || mealFlags[type];
+
+        if (hp <= 20 && hp > 0) document.getElementById('bar').classList.add('low-battery');
+        else document.getElementById('bar').classList.remove('low-battery');
+
+        // 状態を保存
+        localStorage.setItem(STORAGE_KEY, hp);
+        localStorage.setItem(MEAL_KEY, JSON.stringify(mealFlags));
+    }
+
+    function eat() {
+        const now = new Date();
+        const h = now.getHours() + (now.getMinutes() / 60);
+        let type = (h <= 8) ? "morning" : (h >= 11 && h <= 13.5) ? "lunch" : "dinner";
+        hp += 15; 
+        mealFlags[type] = true; 
+        update(); 
+    }
+    
+    function tired(val) { hp -= val; update(); }
+
+    // 🕒 6分に1%減少
+    setInterval(() => { if (hp > 0) { hp -= 1; update(); } }, 360000);
+    setInterval(update, 5000); // 5秒ごとに同期
+    update();
+</script>
+</body>
+</html>
