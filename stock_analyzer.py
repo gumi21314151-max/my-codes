@@ -1,40 +1,43 @@
+import yfinance as yf
 import pandas as pd
 from colorama import init, Fore, Style
 
-# 色付け機能を初期化
+# 色を初期化
 init(autoreset=True)
 
-file_name = "stock_data.csv"
+def gumi_checker():
+    ticker_symbol = "GOOGL"
+    print(f"{Fore.CYAN}--- アルファベット(Google) リアルタイムチェック ---")
 
-try:
-    # CSVファイルを読み込む
-    df = pd.read_csv(file_name)
-    
-    # 最後の2つのデータを取り出す
-    if len(df) >= 2:
-        latest_price = df['Price (USD)'].iloc[-1]
-        previous_price = df['Price (USD)'].iloc[-2]
-        change = latest_price - previous_price
-        
-        print(f"現在の株価: ${latest_price:.2f} ドル")
-        print(f"前回の株価: ${previous_price:.2f} ドル")
-        
-        # --- ここから視覚化（色分け） ---
-        if change > 0:
-            # 上昇は緑（GREEN）
-            print(f"変化: {Fore.GREEN}+${change:.2f} ドル")
-            print(f"{Fore.GREEN}{Style.BRIGHT}【分析結果】株価は上昇しています！ 🚀")
-        elif change < 0:
-            # 下落は赤（RED）
-            print(f"変化: {Fore.RED}-${abs(change):.2f} ドル")
-            print(f"{Fore.RED}{Style.BRIGHT}【分析結果】株価は下降しています。 📉")
-        else:
-            # 変化なしは白
-            print(f"変化: ${change:.2f} ドル")
-            print("【分析結果】株価に変化はありません。")
+    try:
+        # 1. データを取得（1ヶ月分、1日単位）
+        ticker = yf.Ticker(ticker_symbol)
+        df = ticker.history(period="1mo")
+
+        if not df.empty and len(df) >= 2:
+            # 最新と1日前の「終値」を取得
+            latest_price = df['Close'].iloc[-1]
+            previous_price = df['Close'].iloc[-2]
+            change = latest_price - previous_price
             
-    else:
-        print("データがまだ少ないため、分析できません。")
+            print(f"銘柄: {ticker_symbol}")
+            print(f"現在価格: ${latest_price:.2f}")
 
-except FileNotFoundError:
-    print(f"エラー: {file_name} が見つかりません。")
+            # 2. 君の「色分けロジック」発動！
+            if change > 0:
+                print(f"変化: {Fore.GREEN}+${change:.2f} 🚀")
+                print(f"{Fore.GREEN}{Style.BRIGHT}分析：Google絶好調！")
+            elif change < 0:
+                print(f"変化: {Fore.RED}-${abs(change):.2f} 📉")
+                print(f"{Fore.RED}{Style.BRIGHT}分析：今は我慢の時。")
+            else:
+                print(f"変化: $0.00")
+        else:
+            print("データが空っぽです。ネット接続を確認してね。")
+
+    except Exception as e:
+        # 3. 何のエラーか詳しく教えてくれる魔法
+        print(f"{Fore.RED}エラー発生！内容はこちら：\n{e}")
+
+if __name__ == "__main__":
+    gumi_checker()
