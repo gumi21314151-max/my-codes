@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Gumi Tetris - Pause</title>
+    <style>
+        :root { --bg: #05070a; --accent: #007aff; }
+        body { background: var(--bg); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .game-container { display: flex; gap: 20px; align-items: flex-start; background: #111; padding: 20px; border-radius: 10px; border: 2px solid #333; box-shadow: 0 0 50px rgba(0,0,0,0.8); position: relative; }
+        canvas { background: #000; border: 1px solid #222; }
+        .side-panel { display: flex; flex-direction: column; gap: 15px; width: 100px; }
+        .next-box { background: #000; border: 1px solid #222; padding: 10px; text-align: center; }
+        .next-label { font-size: 14px; color: #888; margin-bottom: 5px; }
+        .btn-pause { background: var(--accent); border: none; color: white; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-pause:hover { background: #0056b3; }
+        .controls { font-size: 12px; color: #777; line-height: 1.6; }
+        
+        /* ポーズ画面のオーバーレイ */
+        #pause-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: bold; color: var(--accent); border-radius: 10px; z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div id="pause-overlay">PAUSED</div>
+        <canvas id="tetris" width="240" height="400"></canvas>
+        <div class="side-panel">
+            <div class="next-box">
+                <div class="next-label">NEXT</div>
+                <canvas id="next" width="80" height="80"></canvas>
+            </div>
+            <button class="btn-pause" onclick="togglePause()">PAUSE (P)</button>
+            <div class="controls">
+                ← → : 移動<br>
+                ↑ : 回転<br>
+                ↓ : 加速<br>
+                SPACE : Drop<br>
+                P : Pause
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('tetris');
+        const context = canvas.getContext('2d');
+        const nextCanvas = document.getElementById('next');
+        const nextContext = nextCanvas.getContext('2d');
+        const overlay = document.getElementById('pause-overlay');
+
+        context.scale(20, 20);
+        nextContext.scale(20, 20);
+
+        const colors = [null, '#00f0f0', '#f0a000', '#0000f0', '#f0f000', '#f00000', '#00f000', '#a000f0'];
+        let paused = false;
+
+        function createPiece(type) {
+            if (type === 'I') return [[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]];
+            if (type === 'L') return [[0,2,0],[0,2,0],[0,2,2]];
+            if (type === 'J') return [[0,3,0],[0,3,0],[3,3,0]];
+            if (type === 'O') return [[4,4],[4,4]];
+            if (type === 'Z') return [[5,5,0],[0,5,5],[0,0,0]];
+            if (type === 'S') return [[0,6,6],[6,6,0],[0,0,0]];
+            if (type === 'T') return [[0,7,0],[7,7,7],[0,0,0]];
+        }
+
+        function draw() {
+            context.fillStyle = '#000';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            drawMatrix(arena, {x: 0, y: 0}, context);
+            drawMatrix(player.matrix, player.pos, context);
+            
+            nextContext.fillStyle = '#000';
+            nextContext.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+            drawMatrix(player.next, {x: 1, y: 1}, nextContext);
+        }
+
+        function drawMatrix(matrix, offset, ctx) {
+            matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value !== 0) {
+                        ctx.fillStyle = colors[value];
+                        ctx.fillRect(x + offset.x, y + offset.y, 1, 1);
+                        ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+                        ctx.lineWidth = 0.05;
+                        ctx.strokeRect(x + offset.x, y + offset.y, 1, 1);
+                    }
+                });
+            });
+        }
+
+        function collide(arena, player) {
+            const [m, o] = [player.matrix, player.pos];
+            for (let y = 0; y < m.length; ++y) {
+                for (let x = 0; x < m[y].length; ++x) {
+                    if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) return true;
+                }
+            }
+            return false;
+        }
+
+        function arenaSweep() {
+            outer: for (let y = arena.length - 1; y > 0; --y) {
+                if (arena[y].every(value => value !== 0)) {
+                    const row = arena.splice(y, 1)[0].fill(0);
+                    arena.unshift(row);
+                    ++y;
+                }
+            }
+        }
+
+        function rotate(matrix, dir) {
+            for (let y = 0; y < matrix.length; ++y) {
+                for (let x = 0; x < y; ++x) {
+                    [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+                }
+            }
+            if (dir > 0) matrix.forEach(row => row.reverse());
+            else matrix.reverse();
+        }
+
+        function playerDrop() {
+            if (paused) return;
+            player.pos.y++;
+            if (collide(arena, player)) {
+                player.pos.y--;
+                handleLock();
+            }
+            dropCounter = 0;
+        }
+
+        function handleLock() {
+            const delay = player.isSoftDropping ? 100 : 500;
+            if (!player.lockTimer) player.lockTimer = Date.now();
+            if (Date.now() - player.lockTimer > delay || player.moveCount >= 15) {
+                merge(arena, player);
+                playerReset();
+                arenaSweep();
+            }
+        }
+
+        function playerMove(dir) {
+            if (paused) return;
+            player.pos.x += dir;
+            if (collide(arena, player)) {
+                player.pos.x -= dir;
+            } else if (isGrounded()) {
+                if (player.moveCount < 15) { player.lockTimer = Date.now(); player.moveCount++; }
+            }
+        }
+
+        function isGrounded() {
+            return collide(arena, { ...player, pos: { ...player.pos, y: player.pos.y + 1 } });
+        }
+
+        function playerRotate(dir) {
+            if (paused) return;
+            const pos = player.pos.x;
+            let offset = 1;
+            rotate(player.matrix, dir);
+            while (collide(arena, player)) {
+                player.pos.x += offset;
+                offset = -(offset + (offset > 0 ? 1 : -1));
+                if (offset > player.matrix[0].length) {
+                    rotate(player.matrix, -dir);
+                    player.pos.x = pos;
+                    return;
+                }
+            }
+            if (isGrounded() && player.moveCount < 15) { player.lockTimer = Date.now(); player.moveCount++; }
+        }
+
+        function merge(arena, player) {
+            player.matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value !== 0) arena[y + player.pos.y][x + player.pos.x] = value;
+                });
+            });
+        }
+
+        function playerReset() {
+            const pieces = 'ILJOTSZ';
+            player.matrix = player.next || createPiece(pieces[pieces.length * Math.random() | 0]);
+            player.next = createPiece(pieces[pieces.length * Math.random() | 0]);
+            player.pos.y = 0;
+            player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+            player.lockTimer = null;
+            player.moveCount = 0;
+            if (collide(arena, player)) arena.forEach(row => row.fill(0));
+        }
+
+        function togglePause() {
+            paused = !paused;
+            overlay.style.display = paused ? 'flex' : 'none';
+        }
+
+        let dropCounter = 0;
+        let dropInterval = 1000;
+        let lastTime = 0;
+
+        function update(time = 0) {
+            const deltaTime = time - lastTime;
+            lastTime = time;
+            if (!paused) {
+                dropCounter += deltaTime;
+                if (dropCounter > dropInterval) playerDrop();
+            }
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        const arena = Array.from({length: 20}, () => new Array(12).fill(0));
+        const player = { pos: {x: 0, y: 0}, matrix: null, next: null, lockTimer: null, moveCount: 0, isSoftDropping: false };
+
+        document.addEventListener('keydown', event => {
+            if (event.keyCode === 80) togglePause(); // 'P'
+            if (paused) return;
+            if (event.keyCode === 37) playerMove(-1);
+            else if (event.keyCode === 39) playerMove(1);
+            else if (event.keyCode === 40) { player.isSoftDropping = true; playerDrop(); }
+            else if (event.keyCode === 38) playerRotate(1);
+            else if (event.keyCode === 32) {
+                while(!collide(arena, player)) player.pos.y++;
+                player.pos.y--; merge(arena, player); playerReset(); arenaSweep();
+            }
+        });
+
+        document.addEventListener('keyup', event => { if (event.keyCode === 40) player.isSoftDropping = false; });
+
+        playerReset();
+        update();
+    </script>
+</body>
+</html>
