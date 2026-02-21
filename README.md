@@ -5,7 +5,7 @@
 **【🚀 タイトルをクリックすると各アプリが即座に起動します】**
 
 ### 💼 公開中の実績（エンジニア・グミ選定）
-- **[❤️自分の現在の体力がわかる体力ゲージ](https://gumi21314151-max.github.io/mycodes/hp.html)**
+- **[❤️自分の現在の体力がわかる体力ゲージ](https://gumi21314151-max.github.io/mycodes/index.html)**
   6分ごとに体力1が削れる仕様。朝、昼、夜にしかご飯を食べれないようにしています。
  - **[🎯 狙い撃ち！ファイル高速選別機](https://github.com/gumi21314151-max/my-codes/blob/main/mac_list_up.py)**
   大量のファイルから `y/n` で必要なものだけを「抽出（ピックアップ）」。コピー完了と同時にターミナル履歴を証拠隠滅（clear）する、実務特化型ハック。
@@ -26,7 +26,7 @@
 - **[📚 61秒ドボン！集中タイマー](https://gumi21314151-max.github.io/my-codes/timer.html)**
   10分全力宿題 ⇄ 1分チキンレース。61.00秒を超えたら即ドボンのスリル。
 
-- **[🔮 100段階・究極運勢鑑定](https://gumi21314151-max.github.io/my-codes/index.html)**
+- **[🔮 100段階・究極運勢鑑定](https://gumi21314151-max.github.io/my-codes/uranai.html)**
   1日1回限定。0.1%の「虹色・奇跡演出」を搭載した、グミ・エンジニアリングの原点。
 
 - **[📈 Python・株価リアルタイム分析器](https://github.com/gumi21314151-max/my-codes/commit/b9e19d27f5300f9c03d84cc9d2454af02dde1342)**
